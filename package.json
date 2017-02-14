@@ -1,0 +1,31 @@
+{
+  "name": "ali-oss-dir",
+  "version": "0.0.1",
+  "description": "阿里云oss目录上传下载",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xcrecord/ali-oss-dir.git"
+  },
+  "keywords": [
+    "oss",
+    "dir"
+  ],
+  "author": "pansinm <pansinm@foxmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xcrecord/ali-oss-dir/issues"
+  },
+  "homepage": "https://github.com/xcrecord/ali-oss-dir#readme",
+  "dependencies": {
+    "mocha": "^3.2.0",
+    "pify": "^2.3.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  }
+}
