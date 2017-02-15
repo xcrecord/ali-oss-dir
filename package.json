@@ -1,6 +1,6 @@
 {
   "name": "ali-oss-dir",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "阿里云oss目录上传下载",
   "main": "index.js",
   "scripts": {

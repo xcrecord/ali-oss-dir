@@ -1,6 +1,7 @@
-const rd = require('rd');
+const fs = require('fs');
 const path = require('path');
 const util = require('util');
+const rd = require('rd');
 const co = require('co');
 const pify = require('pify');
 
@@ -38,9 +39,8 @@ function OssDir(ossClient) {
       const operation = operations.shift();
 
       if (util.isString(operation)) {
-        const files = yield pfs.read(operation);
-        files.map(file => ({file, dir: operation}));
-        items.concat(files);
+        const files = yield pfs.readFile(operation);
+        items = items.concat(files.map(file => ({file, dir: operation})));
       }
 
       if (util.isFunction(operation)) {
@@ -52,10 +52,9 @@ function OssDir(ossClient) {
     for (const item of items) {
       const relativePath = item.file.substr(item.dir.length);
       const ossPath = path.join(target, relativePath).replace(/\\/g, '/');
-      ossClient.putStream(ossPath, fs.createReadStream(item.file), { timeout: 20 * 1000 })
-        .then(result => results.push(result));
+      const result = yield ossClient.putStream(ossPath, fs.createReadStream(item.file), { timeout: 20 * 1000 });
+      results.push(result);
     }
-
     return results;
   });
 }

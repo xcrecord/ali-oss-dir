@@ -4,20 +4,25 @@ const ossdir = require('../index');
 
 const ossClient = {
   putStream(ossPath, stream, options) {
-    return Promise.resolve(ossPath);
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(ossPath);
+      }, 100);
+    });
   }
 };
 
 describe('ali-oss-dir', () => {
 
-  it('upload', () => {
+  it('upload', (done) => {
     ossdir(ossClient).upload(path.join(__dirname, 'fixture/a')).to('/test').then((results) => {
       expect(results.length).to.be.equal(1);
       expect(results[0]).to.be.equal('/test/test1.txt');
-    });
+      done();
+    }).catch(done);
   });
 
-  it('filter', () => {
+  it('filter', (done) => {
     ossdir(ossClient)
       .upload(path.join(__dirname, 'fixture/a'))
       .filter((filename) => {
@@ -25,11 +30,12 @@ describe('ali-oss-dir', () => {
       })
       .to('/test').then((results) => {
         expect(results.length).to.be.equal(0);
-      });
+        done();
+      }).catch(done);
   });
 
 
-  it('multi dir upload', () => {
+  it('multi dir upload', (done) => {
     ossdir(ossClient)
       .upload(path.join(__dirname, 'fixture/a'))
       .filter((filename) => {
@@ -37,16 +43,17 @@ describe('ali-oss-dir', () => {
       })
       .upload(path.join(__dirname, 'fixture/b'))
       .to('/test').then((results) => {
-        expect(results.length).to.be.equal(2);
-      });
+        expect(results.length).to.be.equal(3);
+        done();
+      }).catch(done);
   });
 
-  it('nested dir upload', () => {
+  it('nested dir upload', (done) => {
     ossdir(ossClient)
       .upload(path.join(__dirname, 'fixture/b'))
       .to('/test').then((results) => {
-      expect(results.length).to.be.equal(3);
-    });
-
+        expect(results.length).to.be.equal(3);
+        done();
+      }).catch(done);
   });
 });
