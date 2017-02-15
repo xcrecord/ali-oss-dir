@@ -21,8 +21,10 @@
   },
   "homepage": "https://github.com/xcrecord/ali-oss-dir#readme",
   "dependencies": {
+    "co": "^4.6.0",
     "mocha": "^3.2.0",
-    "pify": "^2.3.0"
+    "pify": "^2.3.0",
+    "rd": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

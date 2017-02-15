@@ -40,4 +40,13 @@ describe('ali-oss-dir', () => {
         expect(results.length).to.be.equal(2);
       });
   });
+
+  it('nested dir upload', () => {
+    ossdir(ossClient)
+      .upload(path.join(__dirname, 'fixture/b'))
+      .to('/test').then((results) => {
+      expect(results.length).to.be.equal(3);
+    });
+
+  });
 });

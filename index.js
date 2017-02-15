@@ -1,10 +1,10 @@
-const fs = require('fs');
+const rd = require('rd');
 const path = require('path');
 const util = require('util');
 const co = require('co');
 const pify = require('pify');
 
-pfs = pify(fs);
+pfs = pify(rd);
 
 /**
  * @param ossClient
@@ -38,7 +38,7 @@ function OssDir(ossClient) {
       const operation = operations.shift();
 
       if (util.isString(operation)) {
-        const files = yield pfs.readdir(operation);
+        const files = yield pfs.read(operation);
         files.map(file => ({file, dir: operation}));
         items.concat(files);
       }
