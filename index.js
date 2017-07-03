@@ -33,7 +33,7 @@ function OssDir(ossClient) {
   /**
    * @param target
    */
-  this.to = co.wrap(function*(target) {
+  this.to = co.wrap(function*(target, options = {}) {
     let items = [];
     while (operations.length) {
       const operation = operations.shift();
@@ -52,7 +52,8 @@ function OssDir(ossClient) {
     for (const item of items) {
       const relativePath = item.file.substr(item.dir.length);
       const ossPath = path.join(target, relativePath).replace(/\\/g, '/');
-      const result = yield ossClient.putStream(ossPath, fs.createReadStream(item.file), { timeout: 20 * 1000 });
+      const result = yield ossClient.putStream(ossPath, fs.createReadStream(item.file),
+        Object.assign({ timeout: 20 * 1000 }, options));
       results.push(result);
     }
     return results;
