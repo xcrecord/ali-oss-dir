@@ -25,8 +25,8 @@ describe('ali-oss-dir', () => {
   it('filter', (done) => {
     ossdir(ossClient)
       .upload(path.join(__dirname, 'fixture/a'))
-      .filter((filename) => {
-        return !/test1\.txt$/.test(filename);
+      .filter((file) => {
+        return !/test1\.txt$/.test(file.path);
       })
       .to('/test').then((results) => {
         expect(results.length).to.be.equal(0);
@@ -38,8 +38,8 @@ describe('ali-oss-dir', () => {
   it('multi dir upload', (done) => {
     ossdir(ossClient)
       .upload(path.join(__dirname, 'fixture/a'))
-      .filter((filename) => {
-        return !/test1\.txt$/.test(filename);
+      .filter((file) => {
+        return !/test1\.txt$/.test(file.path);
       })
       .upload(path.join(__dirname, 'fixture/b'))
       .to('/test').then((results) => {
@@ -56,4 +56,17 @@ describe('ali-oss-dir', () => {
         done();
       }).catch(done);
   });
+
+  it('sort', async () => {
+    const ossDir = ossdir(ossClient)
+      .upload(path.join(__dirname, 'fixture/b'))
+      .sort((fileA, fileB) => {
+        if (/test3/.test(fileA)) {
+          return -1;
+        }
+        return 0;
+      });
+
+    expect(/test3/.test(ossDir.files[ossDir.files.length -1]));
+  })
 });

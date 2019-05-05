@@ -23,12 +23,12 @@ class OssDir {
   }
 
   filter(indicator) {
-    this.files = this.files.filter(file => indicator(file.path));
+    this.files = this.files.filter(indicator);
     return this;
   }
 
   sort(indicator) {
-    this.files.sort(file => indicator(file.path));
+    this.files.sort(indicator);
     return this;
   }
 
