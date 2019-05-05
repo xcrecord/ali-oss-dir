@@ -36,7 +36,7 @@ class OssDir {
     const results = [];
     for (const file of this.files) {
       const result = await this.ossClient.putStream(
-        path.posix.resolve(target, file.ossTarget),
+        path.posix.join(target, file.ossTarget),
         fs.createReadStream(file.path),
         Object.assign({
           timeout: 20 * 1000
