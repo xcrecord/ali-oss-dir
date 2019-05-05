@@ -2,62 +2,49 @@ const fs = require('fs');
 const path = require('path');
 const util = require('util');
 const rd = require('rd');
-const co = require('co');
-const pify = require('pify');
 
-pfs = pify(rd);
+class OssDir {
+  constructor(ossClient) {
+    this.ossClient = ossClient;
+    this.files = [];
+  }
 
-/**
- * @param ossClient
- * @constructor
- */
-function OssDir(ossClient) {
-  const operations = [];
-
-  /**
-   * @param dir
-   */
-  this.upload = (dir) => {
-    operations.push(dir);
-    return this;
-  };
-
-  /**
-   * @param callback
-   */
-  this.filter = (callback) => {
-    operations.push(callback);
-    return this;
-  };
-
-  /**
-   * @param target
-   */
-  this.to = co.wrap(function*(target, options = {}) {
-    let items = [];
-    while (operations.length) {
-      const operation = operations.shift();
-
-      if (util.isString(operation)) {
-        const files = yield pfs.readFile(operation);
-        items = items.concat(files.map(file => ({file, dir: operation})));
+  upload(dir) {
+    const files = rd.readFileSync(dir).map(pathStr => {
+      const absoluteDirPath = path.resolve(dir);
+      return {
+        path: pathStr,
+        dir: absoluteDirPath,
+        ossTarget: path.relative(absoluteDirPath, pathStr).replace(/\\/g, '/')
       }
+    });
+    this.files = [...this.files, ...files];
+    return this;
+  }
 
-      if (util.isFunction(operation)) {
-        items = items.filter(item => operation(item.file));
-      }
-    }
+  filter(indicator) {
+    this.files = this.files.filter(file => indicator(file.path));
+    return this;
+  }
 
+  sort(indicator) {
+    this.files.sort(file => indicator(file.path));
+    return this;
+  }
+
+  async to(target, options = {}) {
     const results = [];
-    for (const item of items) {
-      const relativePath = item.file.substr(item.dir.length);
-      const ossPath = path.join(target, relativePath).replace(/\\/g, '/');
-      const result = yield ossClient.putStream(ossPath, fs.createReadStream(item.file),
-        Object.assign({ timeout: 20 * 1000 }, options));
+    for (const file of this.files) {
+      const result = await this.ossClient.putStream(
+        path.posix.resolve(target, file.ossTarget),
+        fs.createReadStream(file.path),
+        Object.assign({
+          timeout: 20 * 1000
+        }, options));
       results.push(result);
     }
     return results;
-  });
+  }
 }
 
 function ossdir(ossClient) {

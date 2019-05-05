@@ -6,6 +6,9 @@
   "scripts": {
     "test": "mocha test"
   },
+  "engines": {
+    "node": ">8.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xcrecord/ali-oss-dir.git"
@@ -21,13 +24,13 @@
   },
   "homepage": "https://github.com/xcrecord/ali-oss-dir#readme",
   "dependencies": {
-    "co": "^4.6.0",
-    "mocha": "^3.2.0",
-    "pify": "^2.3.0",
     "rd": "^1.0.0"
+  },
+  "peerDependencies": {
+    "ali-oss": "*"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^3.2.0"
+    "mocha": "^6.1.4"
   }
 }
